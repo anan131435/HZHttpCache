@@ -13,6 +13,8 @@
 		732C90EF1F8B1F7500F22AB1 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 732C90EE1F8B1F7500F22AB1 /* Assets.xcassets */; };
 		732C90F21F8B1F7500F22AB1 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 732C90F01F8B1F7500F22AB1 /* LaunchScreen.storyboard */; };
 		732C90F51F8B1F7500F22AB1 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 732C90F41F8B1F7500F22AB1 /* main.m */; };
+		732C90FE1F8B24DE00F22AB1 /* NSString+HZHttpCache.m in Sources */ = {isa = PBXBuildFile; fileRef = 732C90FD1F8B24DE00F22AB1 /* NSString+HZHttpCache.m */; };
+		732C91011F8B26A500F22AB1 /* HZHttpResponseCache.m in Sources */ = {isa = PBXBuildFile; fileRef = 732C91001F8B26A500F22AB1 /* HZHttpResponseCache.m */; };
 		F139B79830EDA9D91E8A2B5C /* libPods-HZHttpCache.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6EF2984D9683E55379B33C8E /* libPods-HZHttpCache.a */; };
 /* End PBXBuildFile section */
 
@@ -28,6 +30,10 @@
 		732C90F11F8B1F7500F22AB1 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		732C90F31F8B1F7500F22AB1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		732C90F41F8B1F7500F22AB1 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		732C90FC1F8B24DE00F22AB1 /* NSString+HZHttpCache.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSString+HZHttpCache.h"; sourceTree = "<group>"; };
+		732C90FD1F8B24DE00F22AB1 /* NSString+HZHttpCache.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSString+HZHttpCache.m"; sourceTree = "<group>"; };
+		732C90FF1F8B26A500F22AB1 /* HZHttpResponseCache.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HZHttpResponseCache.h; sourceTree = "<group>"; };
+		732C91001F8B26A500F22AB1 /* HZHttpResponseCache.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HZHttpResponseCache.m; sourceTree = "<group>"; };
 		9A797A3663BBACBB34A455DC /* Pods-HZHttpCache.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-HZHttpCache.release.xcconfig"; path = "Pods/Target Support Files/Pods-HZHttpCache/Pods-HZHttpCache.release.xcconfig"; sourceTree = "<group>"; };
 		D7C06143BF9BBBD194B72D46 /* Pods-HZHttpCache.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-HZHttpCache.debug.xcconfig"; path = "Pods/Target Support Files/Pods-HZHttpCache/Pods-HZHttpCache.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -73,6 +79,7 @@
 		732C90E41F8B1F7500F22AB1 /* HZHttpCache */ = {
 			isa = PBXGroup;
 			children = (
+				732C90FB1F8B24B900F22AB1 /* cache */,
 				732C90E51F8B1F7500F22AB1 /* AppDelegate.h */,
 				732C90E61F8B1F7500F22AB1 /* AppDelegate.m */,
 				732C90E81F8B1F7500F22AB1 /* ViewController.h */,
@@ -84,6 +91,17 @@
 				732C90F41F8B1F7500F22AB1 /* main.m */,
 			);
 			path = HZHttpCache;
+			sourceTree = "<group>";
+		};
+		732C90FB1F8B24B900F22AB1 /* cache */ = {
+			isa = PBXGroup;
+			children = (
+				732C90FC1F8B24DE00F22AB1 /* NSString+HZHttpCache.h */,
+				732C90FD1F8B24DE00F22AB1 /* NSString+HZHttpCache.m */,
+				732C90FF1F8B26A500F22AB1 /* HZHttpResponseCache.h */,
+				732C91001F8B26A500F22AB1 /* HZHttpResponseCache.m */,
+			);
+			path = cache;
 			sourceTree = "<group>";
 		};
 		DAFB892482662ABEB84BC437 /* Pods */ = {
@@ -124,6 +142,7 @@
 		732C90DA1F8B1F7500F22AB1 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				CLASSPREFIX = HZ;
 				LastUpgradeCheck = 0900;
 				ORGANIZATIONNAME = "韩志峰";
 				TargetAttributes = {
@@ -219,6 +238,8 @@
 			files = (
 				732C90EA1F8B1F7500F22AB1 /* ViewController.m in Sources */,
 				732C90F51F8B1F7500F22AB1 /* main.m in Sources */,
+				732C90FE1F8B24DE00F22AB1 /* NSString+HZHttpCache.m in Sources */,
+				732C91011F8B26A500F22AB1 /* HZHttpResponseCache.m in Sources */,
 				732C90E71F8B1F7500F22AB1 /* AppDelegate.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
