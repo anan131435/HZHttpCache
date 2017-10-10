@@ -30,7 +30,9 @@ static const NSInteger kDefauleCacheMazAge = 60 * 60 * 24 * 7;
 }
 @end
 
-
+@interface HZHttpResponseCache ()
+@property (nonatomic, strong) NSMutableSet  *protectCaches;
+@end
 
 @implementation HZHttpResponseCache
 {
@@ -50,8 +52,113 @@ static const NSInteger kDefauleCacheMazAge = 60 * 60 * 24 * 7;
             //判断是否有文件夹HZCacheDirectory ，存在 干掉，创建HZCacheDirectory 文件夹
             [self checkDirectory];
         });
+        //清楚磁盘缓存操作放到后台操作
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(cleanDiskOnBackGround) name:UIApplicationDidEnterBackgroundNotification object:nil];
     }
     return self;
+}
+- (void)dealloc{
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+}
+- (void)cleanDiskOnBackGround{
+    UIApplication *application = [UIApplication sharedApplication];
+    __block UIBackgroundTaskIdentifier bgTask = [application beginBackgroundTaskWithExpirationHandler:^{
+        [application endBackgroundTask:bgTask];
+        bgTask = UIBackgroundTaskInvalid;
+    }];
+    [self cleanDiskWithCompletionBlock:^{
+        [application endBackgroundTask:bgTask];
+        bgTask = UIBackgroundTaskInvalid;
+    }];
+
+}
+- (void)cleanDiskWithCompletionBlock:(void(^)(void))completionBlock{
+    dispatch_async(_HZIOQueue, ^{
+        //获取文件夹下的枚举
+        NSArray *resourceKeys = @[NSURLIsDirectoryKey,NSURLContentModificationDateKey,NSURLNameKey,NSURLLocalizedNameKey,NSURLFileAllocatedSizeKey];
+        NSDirectoryEnumerator *fileEnumerator = [_fileManager enumeratorAtURL:[NSURL fileURLWithPath:_cachePath isDirectory:YES] includingPropertiesForKeys:resourceKeys options:NSDirectoryEnumerationSkipsHiddenFiles errorHandler:nil];
+        NSDate *expireDate = [NSDate dateWithTimeIntervalSinceNow:- self.maxCacheAge];
+        NSMutableDictionary *cacheFiles = [NSMutableDictionary dictionary];
+        NSUInteger currentCacheSize = 0;
+        NSMutableArray *urlsToDelete = [NSMutableArray new];
+        //遍历文件夹下的文件有两个目的
+        // 1.删除过期文件 2.删除比较旧的文件，使得当前文件大小，小于最大文件大小
+        for (NSURL *fileUrl in fileEnumerator) {
+            NSDictionary *attributesDict = [fileUrl resourceValuesForKeys:resourceKeys error:nil];
+            //跳过文件夹
+            if ([attributesDict[NSURLIsDirectoryKey] boolValue]) {
+                continue;
+            }
+            //跳过不能删除的文件数据，比如首页或者比较重要的数据
+            if ([self.protectCaches containsObject:fileUrl.lastPathComponent]) {
+                continue;
+            }
+            //删除过期文件
+            NSDate *modicationDate = attributesDict[NSURLContentModificationDateKey];
+            if ([[modicationDate laterDate:expireDate] isEqualToDate:expireDate]) {
+                [urlsToDelete addObject:fileUrl];
+            }
+            NSNumber *totalAllocatedSize = attributesDict[NSURLFileAllocatedSizeKey];
+            currentCacheSize += [totalAllocatedSize integerValue];
+            [cacheFiles setObject:attributesDict forKey:fileUrl];
+        }
+        for (NSURL *url in urlsToDelete) {
+            [_fileManager removeItemAtURL:url error:nil];
+        }
+        if (self.maxCacheAge > 0 && currentCacheSize > self.maxCacheAge) {
+            NSArray *sortedArray = [cacheFiles keysSortedByValueUsingComparator:^NSComparisonResult(id  _Nonnull obj1, id  _Nonnull obj2) {
+                return [obj1[NSURLContentModificationDateKey] compare:obj2[NSURLContentModificationDateKey]];
+            }];
+            for (NSURL *fileUrl in sortedArray) {
+                if ([_fileManager removeItemAtURL:fileUrl error:nil]) {
+                    NSDictionary *attributesDict = cacheFiles[fileUrl];
+                    NSNumber *totalSize = attributesDict[NSURLFileAllocatedSizeKey];
+                    currentCacheSize -= [totalSize integerValue];
+                    if (currentCacheSize < self.maxCacheSize / 2) {
+                        break;
+                    }
+                }
+            }
+        }
+        if (completionBlock) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                completionBlock();
+            });
+        }
+        
+    });
+}
+- (void)clearCacheOnDisk{
+    [self clearCacheOnDisk:nil];
+}
+- (void)clearCacheOnDisk:(void (^)(void)) complete{
+    dispatch_async(_HZIOQueue, ^{
+        [_fileManager removeItemAtPath:_cachePath error:nil];
+        [_fileManager createDirectoryAtPath:_cachePath withIntermediateDirectories:YES attributes:nil error:nil];
+        if (complete) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                complete();
+            });
+        }
+    });
+}
+//删除到指定日期的缓存
+- (void)deleteCacheToDate:(NSDate *)date{
+    __autoreleasing NSError *error = nil;
+    NSArray *cacheFiles = [_fileManager contentsOfDirectoryAtURL:[NSURL URLWithString:_cachePath] includingPropertiesForKeys:@[NSURLContentModificationDateKey] options:NSDirectoryEnumerationSkipsHiddenFiles error:&error];
+    if (error) {
+        NSLog(@"fail to get cacheFile list %@",error);
+    }
+    dispatch_async(_HZIOQueue, ^{
+        __autoreleasing NSError *checkError = nil;
+        for (NSURL * fielUrl in cacheFiles) {
+            NSDictionary *dictionary = [fielUrl resourceValuesForKeys:@[NSURLContentModificationDateKey] error:&checkError];
+            NSDate *modicationDate = [dictionary objectForKey:NSURLContentModificationDateKey];
+            if (modicationDate.timeIntervalSince1970 - date.timeIntervalSince1970 < 0) {
+                [_fileManager removeItemAtURL:fielUrl error:nil];
+            }
+        }
+    });
 }
 - (void)checkDirectory{
     BOOL isDirectory = nil;
@@ -84,6 +191,12 @@ static const NSInteger kDefauleCacheMazAge = 60 * 60 * 24 * 7;
         
     }
     
+}
+- (NSMutableSet *)protectCaches{
+    if (!_protectCaches) {
+        _protectCaches = [[NSMutableSet alloc] init];
+    }
+    return _protectCaches;
 }
 //读写文件
 - (void)setObject:(id<NSCoding>)object forKey:(NSString *)key{
