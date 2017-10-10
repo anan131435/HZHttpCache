@@ -41,6 +41,14 @@ static const NSInteger kDefauleCacheMazAge = 60 * 60 * 24 * 7;
     NSFileManager *_fileManager;
     HZCache *_memoryCache;
 }
++ (instancetype)sharedCache{
+    static dispatch_once_t onceToken;
+    static HZHttpResponseCache *responseCache = nil;
+    dispatch_once(&onceToken, ^{
+        responseCache = [[HZHttpResponseCache alloc] init];
+    });
+    return responseCache;
+}
 - (instancetype)init{
     self = [super init];
     if (self) {
@@ -57,9 +65,7 @@ static const NSInteger kDefauleCacheMazAge = 60 * 60 * 24 * 7;
     }
     return self;
 }
-- (void)dealloc{
-    [[NSNotificationCenter defaultCenter] removeObserver:self];
-}
+
 - (void)cleanDiskOnBackGround{
     UIApplication *application = [UIApplication sharedApplication];
     __block UIBackgroundTaskIdentifier bgTask = [application beginBackgroundTaskWithExpirationHandler:^{
@@ -192,12 +198,7 @@ static const NSInteger kDefauleCacheMazAge = 60 * 60 * 24 * 7;
     }
     
 }
-- (NSMutableSet *)protectCaches{
-    if (!_protectCaches) {
-        _protectCaches = [[NSMutableSet alloc] init];
-    }
-    return _protectCaches;
-}
+
 //读写文件
 - (void)setObject:(id<NSCoding>)object forKey:(NSString *)key{
     if (!object) {
@@ -223,18 +224,47 @@ static const NSInteger kDefauleCacheMazAge = 60 * 60 * 24 * 7;
     }
     return object;
 }
-+ (instancetype)sharedCache{
-    static dispatch_once_t onceToken;
-    static HZHttpResponseCache *responseCache = nil;
-    dispatch_once(&onceToken, ^{
-        responseCache = [[HZHttpResponseCache alloc] init];
-    });
-    return responseCache;
+//删除特定文件
+- (void)removeObjectForKey:(NSString *)key{
+    [_memoryCache removeObjectForKey:key];
+    NSString *filePath = [_cachePath stringByAppendingPathComponent:key];
+    if ([_fileManager fileExistsAtPath:filePath]) {
+        __autoreleasing NSError *error = nil;
+        [_fileManager removeItemAtPath:filePath error:&error];
+        if (error) {
+            NSLog(@"remove object faild %@",error);
+        }
+    }
+}
+- (NSTimeInterval)cacheFileDuration:(NSString *)path{
+    NSDictionary *attributesDict = [_fileManager attributesOfItemAtPath:path error:nil];
+    if (!attributesDict) {
+        NSLog(@"获取文件属性失败 %@: %@", path, attributesDict);
+        return -1;
+    }
+    return [[attributesDict fileModificationDate] timeIntervalSinceNow];
+    
+}
+//判断文件是否过期
+- (BOOL)expiredWithCacheKey:(NSString *)cacheFileNameKey cacheDuration:(NSTimeInterval)expireduration{
+    NSString *filePath = [_cachePath stringByAppendingPathComponent:cacheFileNameKey];
+    if ([_fileManager fileExistsAtPath:filePath]) {
+        NSTimeInterval fileDuration = [self cacheFileDuration:filePath];
+        return fileDuration > expireduration;
+    }else{//文件不存在则为过期
+        return YES;
+    }
+}
+- (NSMutableSet *)protectCaches{
+    if (!_protectCaches) {
+        _protectCaches = [[NSMutableSet alloc] init];
+    }
+    return _protectCaches;
 }
 
-
-
-
+- (void)dealloc{
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+}
 
 
 
