@@ -13,18 +13,23 @@
 @property (nonatomic, assign) NSInteger maxCacheAge;
 //最大缓存空间 单位bytes
 @property (nonatomic, assign) NSInteger maxCacheSize;
+//获得单例
 + (instancetype)sharedCache;
+//不做内存删除的数据
 - (void)addProtectCacheKey:(NSString *)key;
+#pragma mark - 数据操作
 //设置缓存数据
 - (void)setObject:(id <NSCoding>)object forKey:(NSString *)key;
 //获取缓存数据
 - (id <NSCoding>)objectForKey:(NSString *)key;
+#pragma mark - 删除操作
 //删除指定的缓存
 - (void)removeObjectForKey:(NSString *)key;
 //删除到指定日期的缓存
 - (void)deleteCacheToDate:(NSDate *)date;
 //删除所有缓存
 - (void)clearCacheOnDisk;
+#pragma mark - 工具方法
 //文件存在时间
 - (NSTimeInterval)cacheFileDuration:(NSString *)path;
 //判断一个文件是否过期
