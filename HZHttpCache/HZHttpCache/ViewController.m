@@ -7,7 +7,7 @@
 //
 
 #import "ViewController.h"
-
+#import "HZPerson.h"
 @interface ViewController ()
 
 @end
@@ -16,7 +16,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    
+    HZPerson *person = [[HZPerson alloc] init];
 
     
     

@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		730990591F9DECDF005594C2 /* HZPerson.m in Sources */ = {isa = PBXBuildFile; fileRef = 730990581F9DECDF005594C2 /* HZPerson.m */; };
+		7309905C1F9DF0C4005594C2 /* HZScrollView.m in Sources */ = {isa = PBXBuildFile; fileRef = 7309905B1F9DF0C4005594C2 /* HZScrollView.m */; };
 		732C90E71F8B1F7500F22AB1 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 732C90E61F8B1F7500F22AB1 /* AppDelegate.m */; };
 		732C90EA1F8B1F7500F22AB1 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 732C90E91F8B1F7500F22AB1 /* ViewController.m */; };
 		732C90ED1F8B1F7500F22AB1 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 732C90EB1F8B1F7500F22AB1 /* Main.storyboard */; };
@@ -21,6 +23,10 @@
 
 /* Begin PBXFileReference section */
 		6EF2984D9683E55379B33C8E /* libPods-HZHttpCache.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-HZHttpCache.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		730990571F9DECDF005594C2 /* HZPerson.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HZPerson.h; sourceTree = "<group>"; };
+		730990581F9DECDF005594C2 /* HZPerson.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HZPerson.m; sourceTree = "<group>"; };
+		7309905A1F9DF0C4005594C2 /* HZScrollView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HZScrollView.h; sourceTree = "<group>"; };
+		7309905B1F9DF0C4005594C2 /* HZScrollView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HZScrollView.m; sourceTree = "<group>"; };
 		732C90E21F8B1F7500F22AB1 /* HZHttpCache.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HZHttpCache.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		732C90E51F8B1F7500F22AB1 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		732C90E61F8B1F7500F22AB1 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -87,6 +93,10 @@
 				732C90E61F8B1F7500F22AB1 /* AppDelegate.m */,
 				732C90E81F8B1F7500F22AB1 /* ViewController.h */,
 				732C90E91F8B1F7500F22AB1 /* ViewController.m */,
+				730990571F9DECDF005594C2 /* HZPerson.h */,
+				730990581F9DECDF005594C2 /* HZPerson.m */,
+				7309905A1F9DF0C4005594C2 /* HZScrollView.h */,
+				7309905B1F9DF0C4005594C2 /* HZScrollView.m */,
 				732C90EB1F8B1F7500F22AB1 /* Main.storyboard */,
 				732C90EE1F8B1F7500F22AB1 /* Assets.xcassets */,
 				732C90F01F8B1F7500F22AB1 /* LaunchScreen.storyboard */,
@@ -241,10 +251,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				730990591F9DECDF005594C2 /* HZPerson.m in Sources */,
 				732C90EA1F8B1F7500F22AB1 /* ViewController.m in Sources */,
 				732C90F51F8B1F7500F22AB1 /* main.m in Sources */,
 				732C90FE1F8B24DE00F22AB1 /* NSString+HZHttpCache.m in Sources */,
 				732C91011F8B26A500F22AB1 /* HZHttpResponseCache.m in Sources */,
+				7309905C1F9DF0C4005594C2 /* HZScrollView.m in Sources */,
 				732C90E71F8B1F7500F22AB1 /* AppDelegate.m in Sources */,
 				73FDB6B91F8CC92500EFFB37 /* HZRequestManager.m in Sources */,
 			);
@@ -384,7 +396,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = MF9E79MNS4;
 				INFOPLIST_FILE = HZHttpCache/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = HZ.HZHttpCache;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -400,7 +412,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = MF9E79MNS4;
 				INFOPLIST_FILE = HZHttpCache/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = HZ.HZHttpCache;
 				PRODUCT_NAME = "$(TARGET_NAME)";
